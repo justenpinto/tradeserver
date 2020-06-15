@@ -1,5 +1,6 @@
 import math
 import pandas as pd
+from pathlib import Path
 
 HOURS_IN_TRADING_DAY = 6.5
 MINUTES_PER_HOUR = 60
@@ -91,8 +92,10 @@ class Strategy:
         return '\n'.join(output)
 
     def output_results(self):
+        data_folder = Path('./src/server/data')
         for ticker, strategy_df in self.strategy_data_map.items():
-            with open('./src/server/data/{}_result.csv'.format(ticker.lower()), 'w') as f:
+            output_file = data_folder / '{}_result.csv'.format(ticker.lower())
+            with open(output_file, 'w') as f:
                 f.write('datetime,price,signal,position,pnl\n')
                 for timestamp, row in strategy_df.iterrows():
                     f.write('{},{},{},{},{}\n'.format(timestamp, row['price'], row['signal'], row['current_position'], row['pnl']))

@@ -1,6 +1,8 @@
 import logging
 import pandas as pd
 
+from pathlib import Path
+
 from server.apis.alphavantage_api import AlphaVantageAPI
 from server.apis.finnhub_api import FinnhubAPI
 
@@ -32,7 +34,8 @@ class PriceEngine:
 
     def reload_price_from_file(self, reload_file):
         try:
-            with open('./src/server/data/{}'.format(reload_file), 'r') as f:
+            input_file = Path('./src/server/data') / reload_file
+            with open(input_file, 'r') as f:
                 price_list = []
                 for line in f.readlines()[1:]:
                     timestamp, price = line.rstrip('\n').split(',')
@@ -139,7 +142,9 @@ class PriceEngine:
 
     def output_price_history(self):
         for ticker, price_df in self.prices.items():
-            with open('./src/server/data/{}_price.csv'.format(ticker.lower()), 'w') as f:
+            data_folder = Path('./src/server/data')
+            output_file = data_folder / '{}_price.csv'.format(ticker.lower())
+            with open(output_file, 'w') as f:
                 f.write('datetime,price\n')
                 for timestamp, row in price_df.iterrows():
                     f.write('{},{}\n'.format(timestamp, row['price']))
