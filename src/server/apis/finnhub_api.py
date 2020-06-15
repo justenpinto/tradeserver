@@ -20,7 +20,7 @@ class FinnhubAPI:
 
     @staticmethod
     def request_data(ticker):
-        r = requests.get('{}symbol={}'.format(QUERY_URL, ticker), verify=False)
+        r = requests.get('{}symbol={}'.format(QUERY_URL, ticker))
 
         if r.status_code != 200:
             logging.error('Error fetching {} quote, status code {}: {}'.format(ticker, r.status_code, r.text))

@@ -13,14 +13,13 @@ class PriceEngine:
         self.prices = {}
         self.quote_schedule_map = {}
 
-        for ticker in tickers:
-            self.add_ticker(ticker)
-
         self.interval = interval
 
         if reload_file:
             self.reload_price_from_file(reload_file)
         else:
+            for ticker in tickers:
+                self.add_ticker(ticker)
             self.fetch_historical_prices()
             self.output_price_history()
 
