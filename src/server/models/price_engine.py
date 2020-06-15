@@ -1,16 +1,14 @@
 import logging
 import pandas as pd
 
-from apis.alphavantage_api import AlphaVantageAPI
-from apis.finnhub_api import FinnhubAPI
+from server.apis.alphavantage_api import AlphaVantageAPI
+from server.apis.finnhub_api import FinnhubAPI
 
 
 ALLOWED_INTERVALS = {1, 5, 15, 30, 60}
 
 
 class PriceEngine:
-    # TODO: Convert timestamps to UTC
-    # TODO: Scheduler to fetch quotes - should not fetch quotes outside of market hours
     def __init__(self, tickers, interval, reload_file=None):
         self.prices = {}
         self.quote_schedule_map = {}
@@ -25,8 +23,7 @@ class PriceEngine:
             self.reload_price_from_file(reload_file)
         else:
             self.fetch_historical_prices()
-            # TODO: add this back
-            # self.output_price_history()
+            self.output_price_history()
 
     def reset(self):
         tickers = self.prices.keys()

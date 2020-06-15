@@ -60,8 +60,7 @@ class Strategy:
             returns = strategy_df['price'].pct_change()
             positions = strategy_df['current_position']
             strategy_df['pnl'] = positions * returns
-        # TODO: add back
-        # self.output_results()
+        self.output_results()
 
     def get_rolling_moving_averages(self, price_df):
         rma_df = pd.DataFrame()

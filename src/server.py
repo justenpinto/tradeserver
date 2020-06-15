@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from models.price_engine import PriceEngine
-from models.strategy import Strategy
+from server.models.price_engine import PriceEngine
+from server.models.strategy import Strategy
 
 
 MARKET_OPEN = '09:30'
@@ -30,7 +30,7 @@ def quote_job_func(price_engine, strategy):
         price_engine.fetch_quotes()
         strategy.run()
     else:
-        print('Market is closed, not fetching quotes')
+        print('Market is closed, not fetching quotes.')
 
 
 def schedule_quote_job(minutes, price_engine, strategy, scheduler):
@@ -116,7 +116,7 @@ def server(port=None, reload_file=None, minutes=None, tickers=None, flip_signal=
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Start the trading server.')
     parser.add_argument('--port', type=int, default=8000, help='Specify port to listen on.')
-    parser.add_argument('--minutes', type=int, default=1, help='Frequency of the trading strategy in (5, 15, 30, 60).')
+    parser.add_argument('--minutes', type=int, default=5, help='Frequency of the trading strategy in (5, 15, 30, 60).')
     parser.add_argument('--reload', type=str, help='Reload historical price from file.')
     parser.add_argument('--tickers', nargs='+', help='Tickers to start with. Max of 3.')
     parser.add_argument('--flip_signal', action='store_true', help='Invert the strategy if you wish.')

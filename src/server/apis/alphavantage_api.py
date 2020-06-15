@@ -34,7 +34,7 @@ class AlphaVantageAPI:
         interval = interval or '60min'
         r = requests.get('{}function={}&outputsize=full&symbol={}&interval={}'.format(
             QUERY_URL, function, ticker, interval
-        ))
+        ), verify=False)
 
         if r.status_code != 200:
             logging.error('Error fetching {} historical data, status code: {}. Error: {}'.format(ticker, r.status_code, r.text))

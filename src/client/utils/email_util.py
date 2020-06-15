@@ -28,5 +28,5 @@ def send_email(subject, body=None, to=None):
         email_server.login(GMAIL_USER, GMAIL_PASSWORD)
         email_server.sendmail(GMAIL_USER, recipients, msg.as_string())
     except:
-        error_message = traceback.format_exc()
-        print(error_message)
+        # See comments in README.md
+        pass

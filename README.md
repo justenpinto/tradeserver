@@ -2,7 +2,7 @@
 
 from TraderServer folder, run:
 
-1. python src/server/server.py
+1. python src/server.py
 2. python src/client/client.py
 
 EMAIL
