@@ -12,4 +12,5 @@ Email functionality will not work when you run, as you must authorize your GMAIL
 This service only works for Justen at this point in time. For this reason, the GMAIL_USER and GMAIL_PASSWORD variables in src.client.utils/email_util.py are blanked out.
 
 TIME OUT
+
 Client will timeout with the server after 60 seconds of no response after sending a message
