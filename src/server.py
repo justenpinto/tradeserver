@@ -13,6 +13,10 @@ from server.models.strategy import Strategy
 MARKET_OPEN = '09:30'
 MARKET_CLOSE = '16:00'
 
+scheduler = BackgroundScheduler()
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
+
 
 def ceil_timestamp(ts, delta):
     return ts + (datetime.min - ts) % delta
@@ -55,10 +59,7 @@ def server(port=None, reload_file=None, minutes=None, tickers=None, flip_signal=
     strategy.calculate_positions()
     strategy.calculate_pnl()
 
-    scheduler = BackgroundScheduler()
     quote_job = schedule_quote_job(minutes, price_engine, strategy, scheduler)
-    scheduler.start()
-    atexit.register(lambda: scheduler.shutdown())
 
     print('Server started at: {}:{}'.format(host, port))
 
