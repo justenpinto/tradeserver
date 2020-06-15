@@ -34,7 +34,7 @@ class PriceEngine:
 
     def reload_price_from_file(self, reload_file):
         try:
-            input_file = Path('./src/server/data') / reload_file
+            input_file = Path('{}/src/server/data'.format(Path.cwd())) / reload_file
             with open(input_file, 'r') as f:
                 price_list = []
                 for line in f.readlines()[1:]:
@@ -142,7 +142,7 @@ class PriceEngine:
 
     def output_price_history(self):
         for ticker, price_df in self.prices.items():
-            data_folder = Path('./src/server/data')
+            data_folder = Path('{}/src/server/data'.format(Path.cwd()))
             output_file = data_folder / '{}_price.csv'.format(ticker.lower())
             with open(output_file, 'w') as f:
                 f.write('datetime,price\n')

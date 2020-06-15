@@ -15,7 +15,7 @@ MARKET_CLOSE = '16:00'
 
 scheduler = BackgroundScheduler()
 scheduler.start()
-atexit.register(lambda: scheduler.shutdown())
+atexit.register(lambda: scheduler.shutdown(wait=False))
 
 
 def ceil_timestamp(ts, delta):

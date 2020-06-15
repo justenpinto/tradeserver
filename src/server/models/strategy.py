@@ -92,7 +92,7 @@ class Strategy:
         return '\n'.join(output)
 
     def output_results(self):
-        data_folder = Path('./src/server/data')
+        data_folder = Path('{}/src/server/data'.format(Path.cwd()))
         for ticker, strategy_df in self.strategy_data_map.items():
             output_file = data_folder / '{}_result.csv'.format(ticker.lower())
             with open(output_file, 'w') as f:
