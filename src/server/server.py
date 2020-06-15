@@ -10,18 +10,37 @@ from models.price_engine import PriceEngine
 from models.strategy import Strategy
 
 
+MARKET_OPEN = '09:30'
+MARKET_CLOSE = '16:00'
+
+
 def ceil_timestamp(ts, delta):
     return ts + (datetime.min - ts) % delta
 
 
-def schedule_quote_job(minutes, price_engine, scheduler):
+def is_time_in_range(time, start_range, end_range):
+    if end_range < start_range:
+        return time >= start_range or time <= end_range
+    return start_range <= time <= end_range
+
+
+def quote_job_func(price_engine, strategy):
+    current_time = datetime.now().strftime('%H:%M')
+    if is_time_in_range(current_time, MARKET_OPEN, MARKET_CLOSE):
+        price_engine.fetch_quotes()
+        strategy.run()
+    else:
+        print('Market is closed, not fetching quotes')
+
+
+def schedule_quote_job(minutes, price_engine, strategy, scheduler):
     start_date = ceil_timestamp(datetime.now(), timedelta(minutes=minutes)).strftime('%Y-%m-%d %H:%M:00')
-    quote_job = scheduler.add_job(price_engine.fetch_quotes, 'interval', minutes=minutes, start_date=start_date)
+    quote_job = scheduler.add_job(quote_job_func, 'interval', minutes=minutes, start_date=start_date, args=(price_engine, strategy))
     return quote_job
 
 
 def server(port=None, reload_file=None, minutes=None, tickers=None, flip_signal=None):
-    host = socket.gethostname()
+    host = '127.0.0.1'
     port = port
     s = socket.socket()
     s.bind((host, port))
@@ -32,14 +51,14 @@ def server(port=None, reload_file=None, minutes=None, tickers=None, flip_signal=
         reload_file=reload_file
     )
 
-    scheduler = BackgroundScheduler()
-    quote_job = schedule_quote_job(minutes, price_engine, scheduler)
-    scheduler.start()
-    atexit.register(lambda: scheduler.shutdown())
-
     strategy = Strategy(price_engine, flip_signal=flip_signal)
     strategy.calculate_positions()
     strategy.calculate_pnl()
+
+    scheduler = BackgroundScheduler()
+    quote_job = schedule_quote_job(minutes, price_engine, strategy, scheduler)
+    scheduler.start()
+    atexit.register(lambda: scheduler.shutdown())
 
     print('Server started at: {}:{}'.format(host, port))
 
@@ -82,7 +101,7 @@ def server(port=None, reload_file=None, minutes=None, tickers=None, flip_signal=
                     quote_job.remove()
                     price_engine.reset()
                     strategy.reset()
-                    quote_job = schedule_quote_job(minutes, price_engine, scheduler)
+                    quote_job = schedule_quote_job(minutes, price_engine, strategy, scheduler)
                     response = '0'
                 elif not data:
                     break
@@ -103,7 +122,7 @@ if __name__ == '__main__':
     parser.add_argument('--flip_signal', action='store_true', help='Invert the strategy if you wish.')
 
     args = parser.parse_args()
-    if args.minutes and args.minutes not in {1, 5, 15, 30, 60}:
+    if args.minutes and args.minutes not in {5, 15, 30, 60}:
         print('Invalid minutes interval, defaulting to 5 minutes.')
         args.minutes = 5
     if args.tickers and len(args.tickers) > 3:

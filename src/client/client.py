@@ -2,11 +2,20 @@ import socket
 import sys
 import argparse
 
+from src.client.utils.email_util import send_email
+
 
 def client(host='127.0.0.1', port=8000):
-    # TODO: add email to user when trading system does not respond or gives error
     s = socket.socket()
-    s.connect((host, port))
+    try:
+        s.connect((host, port))
+    except:
+        send_email(
+            subject='Unable to connect to trade server',
+            body='Unable to connect to trade server'
+        )
+        s.close()
+        sys.exit()
 
     try:
         message = input('Enter Command > ')
@@ -14,6 +23,11 @@ def client(host='127.0.0.1', port=8000):
             s.sendall(message.encode(encoding='UTF-8'))
             data = s.recv(1024).decode(encoding='UTF-8')
             print(data)
+            if data == '1':
+                send_email(
+                    subject='Trade Server Error {}'.format(data),
+                    body='Trade server returned with error code {}'
+                )
             message = input('Enter Command > ')
     except KeyboardInterrupt:
         s.close()

@@ -13,12 +13,17 @@ class Strategy:
 
     def reset(self):
         self.strategy_data_map = {}
+        self.run()
         self.calculate_positions()
         self.calculate_pnl()
 
     def remove_ticker(self, ticker):
         if ticker in self.strategy_data_map:
             del self.strategy_data_map[ticker]
+
+    def run(self):
+        self.calculate_positions()
+        self.calculate_pnl()
 
     def calculate_positions(self):
         for ticker, price_df in self.price_engine.prices.items():
