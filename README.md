@@ -2,8 +2,9 @@
 
 from TraderServer folder, run:
 
-1. python src/server.py
-2. python src/client/client.py
+1. pip install -r requirements.txt
+2. python src/server.py
+3. python src/client/client.py
 
 EMAIL
 
