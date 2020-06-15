@@ -16,8 +16,7 @@ class PriceEngine:
         for ticker in tickers:
             self.add_ticker(ticker)
 
-        self.interval = None
-        self.update_interval(interval)
+        self.interval = interval
 
         if reload_file:
             self.reload_price_from_file(reload_file)
@@ -50,14 +49,6 @@ class PriceEngine:
         df = pd.DataFrame(price_list, columns=['timestamp', 'price'])
         df.set_index('timestamp', inplace=True)
         self.prices[ticker] = df
-
-    def update_interval(self, interval: int):
-        if not interval:
-            logging.error('No interval specified.')
-        elif interval not in ALLOWED_INTERVALS:
-            logging.error('{}m interval not allowed for historical API'.format(interval))
-        else:
-            self.interval = interval
 
     def add_ticker(self, ticker):
         if not ticker:

@@ -7,6 +7,7 @@ from src.client.utils.email_util import send_email
 
 def client(host='127.0.0.1', port=8000):
     s = socket.socket()
+    s.settimeout(60)
     try:
         s.connect((host, port))
     except:
@@ -21,7 +22,13 @@ def client(host='127.0.0.1', port=8000):
         message = input('Enter Command > ')
         while message != 'q':
             s.sendall(message.encode(encoding='UTF-8'))
-            data = s.recv(1024).decode(encoding='UTF-8')
+            try:
+                data = s.recv(1024).decode(encoding='UTF-8')
+            except socket.timeout:
+                send_email(
+                    subject='Trade Server Timedout',
+                    body='Trade server timed out!'
+                )
             print(data)
             if data == '1':
                 send_email(
